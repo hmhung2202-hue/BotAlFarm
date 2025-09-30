@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, send_from_directory
+import os
 
 app = Flask(__name__)
 
@@ -6,17 +7,11 @@ app = Flask(__name__)
 def home():
     return "Flask app running for Zalo OA integration!"
 
-# Route cho xác thực domain với Zalo
-@app.route('/zalo_verifierPTsW5Q-f325ke9Hyjw...KSDJOq.html')
-def verify():
-    return "zalo_verifierPTsW5Q-f325ke9Hyjw...KSDJOq.html"
-
-# Webhook để nhận sự kiện từ Zalo OA
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    data = request.json
-    print("Webhook data:", data)
-    return "ok", 200
+# Route để phục vụ file xác minh Zalo
+@app.route('/<path:filename>')
+def verify_file(filename):
+    return send_from_directory(os.getcwd(), filename)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
